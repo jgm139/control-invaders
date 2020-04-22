@@ -7,19 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8483A0B02448489600F7272F /* ExtensionsControlViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8483A0AF2448489600F7272F /* ExtensionsControlViewController.swift */; };
+		8483A0B22448492E00F7272F /* BLE.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8483A0B12448492E00F7272F /* BLE.swift */; };
 		8495361A2447187D00E024A6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849536192447187D00E024A6 /* AppDelegate.swift */; };
 		8495361C2447187D00E024A6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8495361B2447187D00E024A6 /* SceneDelegate.swift */; };
-		8495361E2447187D00E024A6 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8495361D2447187D00E024A6 /* ViewController.swift */; };
+		8495361E2447187D00E024A6 /* ControlViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8495361D2447187D00E024A6 /* ControlViewController.swift */; };
 		849536212447187D00E024A6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8495361F2447187D00E024A6 /* Main.storyboard */; };
 		849536232447187F00E024A6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 849536222447187F00E024A6 /* Assets.xcassets */; };
 		849536262447187F00E024A6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 849536242447187F00E024A6 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8483A0AF2448489600F7272F /* ExtensionsControlViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionsControlViewController.swift; sourceTree = "<group>"; };
+		8483A0B12448492E00F7272F /* BLE.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BLE.swift; path = ../../InvadersScreen/InvadersScreen/BLE.swift; sourceTree = "<group>"; };
 		849536162447187D00E024A6 /* InvadersControlShooter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InvadersControlShooter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		849536192447187D00E024A6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8495361B2447187D00E024A6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		8495361D2447187D00E024A6 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		8495361D2447187D00E024A6 /* ControlViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlViewController.swift; sourceTree = "<group>"; };
 		849536202447187D00E024A6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		849536222447187F00E024A6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		849536252447187F00E024A6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -56,9 +60,11 @@
 		849536182447187D00E024A6 /* InvadersControlShooter */ = {
 			isa = PBXGroup;
 			children = (
+				8483A0B12448492E00F7272F /* BLE.swift */,
 				849536192447187D00E024A6 /* AppDelegate.swift */,
 				8495361B2447187D00E024A6 /* SceneDelegate.swift */,
-				8495361D2447187D00E024A6 /* ViewController.swift */,
+				8495361D2447187D00E024A6 /* ControlViewController.swift */,
+				8483A0AF2448489600F7272F /* ExtensionsControlViewController.swift */,
 				8495361F2447187D00E024A6 /* Main.storyboard */,
 				849536222447187F00E024A6 /* Assets.xcassets */,
 				849536242447187F00E024A6 /* LaunchScreen.storyboard */,
@@ -138,7 +144,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8495361E2447187D00E024A6 /* ViewController.swift in Sources */,
+				8483A0B22448492E00F7272F /* BLE.swift in Sources */,
+				8483A0B02448489600F7272F /* ExtensionsControlViewController.swift in Sources */,
+				8495361E2447187D00E024A6 /* ControlViewController.swift in Sources */,
 				8495361A2447187D00E024A6 /* AppDelegate.swift in Sources */,
 				8495361C2447187D00E024A6 /* SceneDelegate.swift in Sources */,
 			);
@@ -287,6 +295,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = CW7DY5Z6H4;
 				INFOPLIST_FILE = InvadersControlShooter/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -305,6 +314,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = CW7DY5Z6H4;
 				INFOPLIST_FILE = InvadersControlShooter/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -17,7 +17,7 @@ struct BLE {
     public static let CONTROL_SHOOTER_CHARACTERISTIC_UUID_X = CBUUID(string:"C1B89437-74B3-4DA7-9780-9EDAC73CD146")
     public static let CONTROL_SHOOTER_CHARACTERISTIC_UUID_Y = CBUUID(string:"08D12BDA-CAE0-424B-B9F6-478C13CC400B")
     
-    public static let CONTROL_SHOOTER_CHARACTERISTIC_PROPERTIES: CBCharacteristicProperties = .read
+    public static let CONTROL_SHOOTER_CHARACTERISTIC_PROPERTIES: CBCharacteristicProperties = .notify
     public static let CONTROL_SHOOTER_CHARACTERISTIC_PERMISSIONS: CBAttributePermissions = .readable
     
     // Screen Device constants

@@ -43,6 +43,8 @@ class ScreenViewController: NSViewController {
         view.wantsLayer = true
         view.layer?.backgroundColor = NSColor.white.cgColor
         
+        print("View - x: \(self.view.frame.maxX), y: \(self.view.frame.maxY)")
+        
         self.centralManager = CBCentralManager(delegate: self, queue: nil)
         self.peripheralManager = CBPeripheralManager(delegate: self, queue: nil)
         

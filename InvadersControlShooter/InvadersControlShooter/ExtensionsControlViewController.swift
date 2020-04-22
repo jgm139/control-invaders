@@ -1,16 +1,16 @@
 //
-//  ExtensionsScreenViewController.swift
-//  InvadersScreen
+//  ExtensionsControlViewController.swift
+//  InvadersControlShooter
 //
-//  Created by Julia García Martínez on 14/04/2020.
+//  Created by Julia García Martínez on 16/04/2020.
 //  Copyright © 2020 Julia García Martínez. All rights reserved.
 //
 
-import Cocoa
+import UIKit
 import CoreBluetooth
 
-// Implementación de la parte central de macOS
-extension ScreenViewController: CBCentralManagerDelegate {
+// Implementación de la parte central de iOS
+extension ControlViewController: CBCentralManagerDelegate {
     
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         switch central.state {
@@ -28,8 +28,8 @@ extension ScreenViewController: CBCentralManagerDelegate {
                 print("central.state is .poweredOn")
                 // Con scanForPeripherals escanemos los periféricos.
                 // Especificamos que queremos periféricos con un determinado servicio,
-                // en nuestro caso CONTROL_SHOOTER_SERVICE_UUID_XY
-                self.centralManager?.scanForPeripherals(withServices: [BLE.CONTROL_SHOOTER_SERVICE_UUID_XY])
+                // en nuestro caso SCREEN_DEVICE_SERVICE_UUID_SHOOT
+                self.centralManager?.scanForPeripherals(withServices: [BLE.SCREEN_DEVICE_SERVICE_UUID_SHOOT])
             default:
                 break
         }
@@ -44,7 +44,7 @@ extension ScreenViewController: CBCentralManagerDelegate {
             // - paramos el escaneo de periféricos
             // - asignamos la clase delegada
             // - nos conectamos a él para obtener información
-            if advertisementPackageName == BLE.nameControlShooterDevicePeripherical {
+            if advertisementPackageName == BLE.nameScreenDevicePeripherical {
                 self.selectedPeripheral = peripheral
                 self.centralManager?.stopScan()
                 self.selectedPeripheral.delegate = self
@@ -60,11 +60,12 @@ extension ScreenViewController: CBCentralManagerDelegate {
         
         // Aunque en la petición del periférico hemos especificado el tipo de servicio,
         // es necesario descubrir el servicio para usarlo
-        self.selectedPeripheral.discoverServices([BLE.CONTROL_SHOOTER_SERVICE_UUID_XY])
+        self.selectedPeripheral.discoverServices([BLE.SCREEN_DEVICE_SERVICE_UUID_SHOOT])
     }
+
 }
 
-extension ScreenViewController: CBPeripheralDelegate {
+extension ControlViewController: CBPeripheralDelegate {
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         guard let services = peripheral.services else { return }
@@ -72,8 +73,8 @@ extension ScreenViewController: CBPeripheralDelegate {
         for service in services {
             print("Central: hemos encontrado un servicio con UUID: " + service.uuid.uuidString)
             
-            if service.uuid == BLE.CONTROL_SHOOTER_SERVICE_UUID_XY {
-                peripheral.discoverCharacteristics([BLE.CONTROL_SHOOTER_CHARACTERISTIC_UUID_X, BLE.CONTROL_SHOOTER_CHARACTERISTIC_UUID_Y], for: service)
+            if service.uuid == BLE.SCREEN_DEVICE_SERVICE_UUID_SHOOT {
+                peripheral.discoverCharacteristics([BLE.SCREEN_DEVICE_CHARACTERISTIC_UUID_SHOOT], for: service)
                 
                 print("Central: hemos encontrado el servicio y procedemos a descubrir características")
             }
@@ -86,44 +87,21 @@ extension ScreenViewController: CBPeripheralDelegate {
         for characteristic in characteristics {
             print("Central: hemos encontrado la característica con UUID: " + characteristic.uuid.uuidString + " del periférico " + characteristic.service.peripheral.name!)
             
-            if characteristic.uuid == BLE.CONTROL_SHOOTER_CHARACTERISTIC_UUID_X || characteristic.uuid == BLE.CONTROL_SHOOTER_CHARACTERISTIC_UUID_Y {
+            if characteristic.uuid == BLE.SCREEN_DEVICE_CHARACTERISTIC_UUID_SHOOT {
                 // La característica notificará que hay una actualización de los valores
-                if characteristic.properties.contains(.notify) {
-                    print("Central: hemos encontrado la característica X o Y")
-                    print("Central: Solicitamos lectura de su valor")
-                    peripheral.setNotifyValue(true, for: characteristic)
+                if characteristic.properties.contains(.writeWithoutResponse) {
+                    print("Central: hemos encontrado la característica SHOOT")
+                    self.peripheral = peripheral
+                    self.characteristicShoot = characteristic
                 }
             }
         }
     }
-    
-    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        if characteristic.uuid == BLE.CONTROL_SHOOTER_CHARACTERISTIC_UUID_X {
-            if let valueX = characteristic.value {
-                let stringValue = String(data: valueX, encoding: String.Encoding.utf8) ?? "0.0"
-                let dX = (Double(stringValue) ?? 0)
-                let intValue = ((dX + 1) * Double(self.view.frame.maxX)) / 2
-                print("Central: valor de x obtenido: \(intValue)")
-                self.aimImageView.frame.origin = CGPoint(x: intValue, y: Double(self.aimImageView.frame.origin.y))
-            }
-        }
-        
-        if characteristic.uuid == BLE.CONTROL_SHOOTER_CHARACTERISTIC_UUID_Y {
-            if let valueY = characteristic.value {
-                let stringValue = String(data: valueY, encoding: String.Encoding.utf8) ?? "0.0"
-                let dY = (Double(stringValue) ?? 0)
-                let intValue = ((dY + 1) * Double(self.view.frame.maxY)) / 2
-                print("Central: valor de y obtenido: \(intValue)")
-                self.aimImageView.frame.origin = CGPoint(x: Double(self.aimImageView.frame.origin.x), y: intValue)
-            }
-        }
-    }
-    
 }
 
-// Implementación de la parte periférica del macOS
-// Servicio con característica SHOOT
-extension ScreenViewController: CBPeripheralManagerDelegate {
+// Implementación de la parte periférica de iOS
+// Servicio con características X e Y
+extension ControlViewController: CBPeripheralManagerDelegate {
     
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
         
@@ -134,21 +112,25 @@ extension ScreenViewController: CBPeripheralManagerDelegate {
                 self.peripheralManager.stopAdvertising()
             }
             
-            // Creamos el servicio y la característica
-            let myService = CBMutableService(type: BLE.SCREEN_DEVICE_SERVICE_UUID_SHOOT, primary: true)
-            let myCharacteristic = CBMutableCharacteristic(type: BLE.SCREEN_DEVICE_CHARACTERISTIC_UUID_SHOOT, properties: BLE.SCREEN_DEVICE_CHARACTERISTIC_PROPERTIES_SHOOT, value: nil, permissions: BLE.SCREEN_DEVICE_CHARACTERISTIC_PERMISSIONS_SHOOT)
+            // Creamos el servicio y las características
+            //let pX = "\(self.position.x)".data(using: .utf8)
+            //let pY = "\(self.position.y)".data(using: .utf8)
             
-            myService.characteristics = [myCharacteristic]
+            self.myService = CBMutableService(type: BLE.CONTROL_SHOOTER_SERVICE_UUID_XY, primary: true)
+            self.myCharacteristicX = CBMutableCharacteristic(type: BLE.CONTROL_SHOOTER_CHARACTERISTIC_UUID_X, properties: BLE.CONTROL_SHOOTER_CHARACTERISTIC_PROPERTIES, value: nil, permissions: BLE.CONTROL_SHOOTER_CHARACTERISTIC_PERMISSIONS)
+            self.myCharacteristicY = CBMutableCharacteristic(type: BLE.CONTROL_SHOOTER_CHARACTERISTIC_UUID_Y, properties: BLE.CONTROL_SHOOTER_CHARACTERISTIC_PROPERTIES, value: nil, permissions: BLE.CONTROL_SHOOTER_CHARACTERISTIC_PERMISSIONS)
+            
+            self.myService!.characteristics = [self.myCharacteristicX!, self.myCharacteristicY!]
             
             // Añadimos el servicio al periférico local
-            self.peripheralManager.add(myService)
+            self.peripheralManager.add(self.myService!)
             
             print("Periférico local: inicializamos árbol de servicios y características")
             
             // Iniciamos el advertising
-            self.peripheralManager.startAdvertising([CBAdvertisementDataServiceUUIDsKey: [BLE.SCREEN_DEVICE_SERVICE_UUID_SHOOT], CBAdvertisementDataLocalNameKey: BLE.nameScreenDevicePeripherical])
+            self.peripheralManager.startAdvertising([CBAdvertisementDataServiceUUIDsKey: [BLE.CONTROL_SHOOTER_SERVICE_UUID_XY], CBAdvertisementDataLocalNameKey: BLE.nameControlShooterDevicePeripherical])
             
-            print("Periférico local: empezamos a publicitarnos con el nombre de: " + BLE.nameScreenDevicePeripherical)
+            print("Periférico local: empezamos a publicitarnos con el nombre de: " + BLE.nameControlShooterDevicePeripherical)
         }
     }
     
@@ -164,9 +146,15 @@ extension ScreenViewController: CBPeripheralManagerDelegate {
         }
     }
     
-    func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveWrite requests: [CBATTRequest]) {
-        print("Periférico local: recibimos disparo")
+    func peripheralManagerIsReady(toUpdateSubscribers peripheral: CBPeripheralManager) {
+        if !self.checkUpdateX {
+            peripheral.updateValue("\(self.position.x)".data(using: .utf8)!, for: myCharacteristicX!, onSubscribedCentrals: nil)
+            self.checkUpdateX = true
+        }
         
-        shoot()
+        if !self.checkUpdateY {
+            peripheral.updateValue("\(self.position.y)".data(using: .utf8)!, for: myCharacteristicY!, onSubscribedCentrals: nil)
+            self.checkUpdateY = true
+        }
     }
 }
